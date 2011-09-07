@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "rack-auth-shared_cookie/version"
+require "rack/auth/shared_cookie"
 
 Gem::Specification.new do |s|
   s.name        = "rack-auth-shared_cookie"

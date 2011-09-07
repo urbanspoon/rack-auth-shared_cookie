@@ -1,8 +1,7 @@
-require "rack-auth-shared_cookie/version"
-
 module Rack
   module Auth
-    module SharedCookie
+    class SharedCookie
+      VERSION = '0.0.1'
       # Your code goes here...
     end
   end
