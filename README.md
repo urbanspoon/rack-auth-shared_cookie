@@ -6,5 +6,7 @@ shared cookie, but not authenticating the user.
 = Prerequisites
 rack 1.0.0 or later
 
-= Usage
-use "Rack::Auth::SharedCookie", :secret => "mylongsecret"
+= Usage in Rails
+require 'rack/auth/shared_cookie'
+
+config.middleware.use "Rack::Auth::SharedCookie", :secret => "mylongsecret"
