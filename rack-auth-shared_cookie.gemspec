@@ -18,5 +18,6 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  gem.add_runtime_dependency "rack", ">= 1.0.0"
+  s.add_runtime_dependency "rack", [">= 1.0.0"]
+  s.add_runtime_dependency "activesupport", [">= 2.3.10"]
 end
