@@ -6,8 +6,6 @@ module Rack
   module Auth
     # Authenticates users using a cookie that is optionally shared across subdomains
     class SharedCookie
-      VERSION = '0.0.1'
-
       DEFAULT_OPTIONS = {
         :cookie_name => 'auth_token',
         :shared_domain => true,
