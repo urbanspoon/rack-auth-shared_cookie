@@ -1,6 +1,6 @@
 module Rack
   module Auth
-    module Sharedcookie
+    module SharedCookie
       VERSION = "0.0.1"
     end
   end

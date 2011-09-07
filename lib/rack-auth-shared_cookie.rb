@@ -2,7 +2,7 @@ require "rack-auth-shared_cookie/version"
 
 module Rack
   module Auth
-    module Sharedcookie
+    module SharedCookie
       # Your code goes here...
     end
   end
