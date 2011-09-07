@@ -4,12 +4,12 @@ require "rack-auth-shared_cookie/version"
 
 Gem::Specification.new do |s|
   s.name        = "rack-auth-shared_cookie"
-  s.version     = Rack::Auth::Sharedcookie::VERSION
+  s.version     = Rack::Auth::SharedCookie::VERSION
   s.authors     = ["Grant Rodgers"]
   s.email       = ["grantr@gmail.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Authenticate with a shared cookie}
+  s.description = %q{A rack middleware that enables authentication using a shared cookie across subdomains.}
 
   s.rubyforge_project = "rack-auth-shared_cookie"
 
