@@ -1,3 +1,6 @@
+Rack::Auth::SharedCookie
+========================
+
 Description
 -----------
 Rack::Auth::SharedCookie is a rack middleware that uses a shared cookie to 
