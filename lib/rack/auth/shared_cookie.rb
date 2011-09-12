@@ -54,7 +54,8 @@ module Rack
         if @env.has_key?('rack.auth.user')
           if @env['rack.auth.user'].blank?
             RAILS_DEFAULT_LOGGER.info("deleting cookie: #{@cookie_name}") #DEBUG
-            Utils.delete_cookie_header!(headers, @cookie_name)
+            # Generate a cookie here so that we delete with the proper parameters (domain)
+            Utils.delete_cookie_header!(headers, @cookie_name, generate_cookie)
           else
             RAILS_DEFAULT_LOGGER.info("setting cookie: #{@cookie_name}") #DEBUG
             Utils.set_cookie_header!(headers, @cookie_name, generate_cookie)
@@ -84,7 +85,7 @@ module Rack
       end
 
       def create_auth_token
-        if @env['rack.auth.user']
+        unless @env['rack.auth.user'].blank?
           cookie_value = {
             'AUTH_USER' => @env['rack.auth.user']
           }
