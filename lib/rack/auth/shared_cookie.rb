@@ -1,5 +1,5 @@
 require 'rack/request'
-require 'rack/response'
+require 'rack/utils'
 require 'active_support/message_verifier'
 
 module Rack
@@ -36,7 +36,7 @@ module Rack
         request = Rack::Request.new(@env)
 
         if request.cookies.has_key?(@cookie_name)
-          RAILS_DEFAULT_LOGGER.info("cookie: #{request.cookies[@cookie_name].inspect}") #DEBUG
+          RAILS_DEFAULT_LOGGER.info("read cookie: #{request.cookies[@cookie_name].inspect}") #DEBUG
           begin
             cookie_hash = read_cookie(request)
           rescue
@@ -50,16 +50,19 @@ module Rack
 
       def write_auth(response)
         status, headers, body = response
-        response = Rack::Response.new(body, status, headers)
 
-        if @env['rack.auth.user']
-          #TODO this is generating cookies for two domains?
-          #TODO logging out doesn't work - calls .id on nil
-          RAILS_DEFAULT_LOGGER.info("setting cookie: #{@cookie_name}") #DEBUG
-          response.set_cookie(@cookie_name, generate_cookie)
+        if @env.has_key?('rack.auth.user')
+          if @env['rack.auth.user'].blank?
+            RAILS_DEFAULT_LOGGER.info("deleting cookie: #{@cookie_name}") #DEBUG
+            Utils.delete_cookie_header!(headers, @cookie_name)
+          else
+            #TODO this is generating cookies for two domains?
+            RAILS_DEFAULT_LOGGER.info("setting cookie: #{@cookie_name}") #DEBUG
+            Utils.set_cookie_header!(headers, @cookie_name, generate_cookie)
+          end
         end
 
-        response.finish
+        [status, headers, body]
       end
 
       def read_cookie(request)
@@ -81,8 +84,8 @@ module Rack
         unless @env['rack.auth.domain'].blank?
           cookie[:domain] = @env['rack.auth.domain']
         end
-        RAILS_DEFAULT_LOGGER.info("cookie is: #{cookie.inspect}") #DEBUG
-        RAILS_DEFAULT_LOGGER.info("cookie value is: #{cookie_value.inspect}") #DEBUG
+        RAILS_DEFAULT_LOGGER.info("write cookie is: #{cookie.inspect}") #DEBUG
+        RAILS_DEFAULT_LOGGER.info("write cookie value is: #{cookie_value.inspect}") #DEBUG
         cookie
       end
 
