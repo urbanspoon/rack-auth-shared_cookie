@@ -36,6 +36,11 @@ module Rack
         request = Rack::Request.new(@env)
 
         @env['rack.auth.domain'] = cookie_domain(request.host)
+        # Browsers will not allow cookies to be set at the top level (.com) so warn about that
+        if @env['rack.auth.domain'].split('.').size < 3 # split will return an empty string for leading .
+          RAILS_DEFAULT_LOGGER.warn("[Rack::Auth::SharedCookie] #{@env['rack.auth.domain']} is not a valid cookie domain, must have at least 2 segments")
+        end
+
         unless request.cookies[@cookie_name].blank?
           begin
             cookie_hash = read_cookie(request)
@@ -86,14 +91,11 @@ module Rack
 
       # return the shared domain if configured
       # replaces the first n domain segments with a period
-      # N.B. browsers will not allow cookies to be set at the top level, ie .com
-      # TODO warn about this situation in the log
       def cookie_domain(host)
         if @shared_domain && @shared_domain_depth.to_i > 0
           host.sub(/^(.+?\.){#{@shared_domain_depth}}/, '.')
         end
       end
-
     end
   end
 end
