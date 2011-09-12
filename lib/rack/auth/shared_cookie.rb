@@ -93,7 +93,7 @@ module Rack
       # replaces the first n domain segments with a period
       def cookie_domain(host)
         if @shared_domain && @shared_domain_depth.to_i > 0
-          host.sub(/^(.+?\.){#{@shared_domain_depth}}/, '.')
+          '.' + host.sub(/^(.+?\.){#{@shared_domain_depth}}/, '')
         end
       end
     end
