@@ -35,6 +35,7 @@ module Rack
       def read_auth
         request = Rack::Request.new(@env)
 
+        @env['rack.auth.domain'] = cookie_domain(request.host)
         if request.cookies.has_key?(@cookie_name)
           RAILS_DEFAULT_LOGGER.info("read cookie: #{request.cookies[@cookie_name].inspect}") #DEBUG
           begin
@@ -44,7 +45,6 @@ module Rack
           end
 
           @env['rack.auth.user'] = cookie_hash['AUTH_USER']
-          @env['rack.auth.domain'] = cookie_domain(request.host)
         end
       end
 
@@ -56,7 +56,6 @@ module Rack
             RAILS_DEFAULT_LOGGER.info("deleting cookie: #{@cookie_name}") #DEBUG
             Utils.delete_cookie_header!(headers, @cookie_name)
           else
-            #TODO this is generating cookies for two domains?
             RAILS_DEFAULT_LOGGER.info("setting cookie: #{@cookie_name}") #DEBUG
             Utils.set_cookie_header!(headers, @cookie_name, generate_cookie)
           end
