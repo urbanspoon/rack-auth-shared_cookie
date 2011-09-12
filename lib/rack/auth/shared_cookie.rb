@@ -36,7 +36,7 @@ module Rack
         request = Rack::Request.new(@env)
 
         @env['rack.auth.domain'] = cookie_domain(request.host)
-        if request.cookies.has_key?(@cookie_name)
+        unless request.cookies[@cookie_name].blank?
           RAILS_DEFAULT_LOGGER.info("read cookie: #{request.cookies[@cookie_name].inspect}") #DEBUG
           begin
             cookie_hash = read_cookie(request)
