@@ -36,10 +36,11 @@ module Rack
         request = Rack::Request.new(@env)
 
         if request.cookies.has_key?(@cookie_name)
+          RAILS_DEFAULT_LOGGER.info("cookie: #{request.cookies[@cookie_name].inspect}") #DEBUG
           begin
             cookie_hash = read_cookie(request)
           rescue
-            auth_fail = e.message #TODO
+            RAILS_DEFAULT_LOGGER.error("Exception reading auth cookie: #{$!}")
           end
 
           @env['rack.auth.user'] = cookie_hash['AUTH_USER']
@@ -52,6 +53,9 @@ module Rack
         response = Rack::Response.new(body, status, headers)
 
         if @env['rack.auth.user']
+          #TODO this is generating cookies for two domains?
+          #TODO logging out doesn't work - calls .id on nil
+          RAILS_DEFAULT_LOGGER.info("setting cookie: #{@cookie_name}") #DEBUG
           response.set_cookie(@cookie_name, generate_cookie)
         end
 
@@ -77,7 +81,8 @@ module Rack
         unless @env['rack.auth.domain'].blank?
           cookie[:domain] = @env['rack.auth.domain']
         end
-        RAILS_DEFAULT_LOGGER.debug("cookie is: #{cookie.inspect}")
+        RAILS_DEFAULT_LOGGER.info("cookie is: #{cookie.inspect}") #DEBUG
+        RAILS_DEFAULT_LOGGER.info("cookie value is: #{cookie_value.inspect}") #DEBUG
         cookie
       end
 
