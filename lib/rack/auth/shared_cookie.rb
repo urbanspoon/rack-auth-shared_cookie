@@ -37,11 +37,10 @@ module Rack
 
         @env['rack.auth.domain'] = cookie_domain(request.host)
         unless request.cookies[@cookie_name].blank?
-          RAILS_DEFAULT_LOGGER.info("read cookie: #{request.cookies[@cookie_name].inspect}") #DEBUG
           begin
             cookie_hash = read_cookie(request)
           rescue
-            RAILS_DEFAULT_LOGGER.error("Exception reading auth cookie: #{$!}")
+            RAILS_DEFAULT_LOGGER.error("[Rack::Auth::SharedCookie] Exception reading auth cookie: #{$!}")
           end
 
           @env['rack.auth.user'] = cookie_hash['AUTH_USER']
@@ -53,11 +52,9 @@ module Rack
 
         if @env.has_key?('rack.auth.user')
           if @env['rack.auth.user'].blank?
-            RAILS_DEFAULT_LOGGER.info("deleting cookie: #{@cookie_name}") #DEBUG
             # Generate a cookie here so that we delete with the proper parameters (domain)
             Utils.delete_cookie_header!(headers, @cookie_name, generate_cookie.merge(:expires => Time.at(0)))
           else
-            RAILS_DEFAULT_LOGGER.info("setting cookie: #{@cookie_name}") #DEBUG
             Utils.set_cookie_header!(headers, @cookie_name, generate_cookie)
           end
         end
@@ -78,18 +75,13 @@ module Rack
         }
 
         cookie[:domain] = @env['rack.auth.domain'] unless @env['rack.auth.domain'].blank?
-
-        RAILS_DEFAULT_LOGGER.info("write cookie is: #{cookie.inspect}") #DEBUG
         cookie
       end
 
       def create_auth_token
-        cookie_value = {
+        @verifier.generate({
           'AUTH_USER' => @env['rack.auth.user']
-        }
-
-        RAILS_DEFAULT_LOGGER.info("write cookie value is: #{cookie_value.inspect}") #DEBUG
-        @verifier.generate(cookie_value)
+        })
       end
 
       # return the shared domain if configured
