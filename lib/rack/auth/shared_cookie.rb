@@ -55,7 +55,7 @@ module Rack
           if @env['rack.auth.user'].blank?
             RAILS_DEFAULT_LOGGER.info("deleting cookie: #{@cookie_name}") #DEBUG
             # Generate a cookie here so that we delete with the proper parameters (domain)
-            Utils.delete_cookie_header!(headers, @cookie_name, generate_cookie)
+            Utils.delete_cookie_header!(headers, @cookie_name, generate_cookie.merge(:expires => Time.at(0)))
           else
             RAILS_DEFAULT_LOGGER.info("setting cookie: #{@cookie_name}") #DEBUG
             Utils.set_cookie_header!(headers, @cookie_name, generate_cookie)
@@ -80,18 +80,16 @@ module Rack
         cookie[:domain] = @env['rack.auth.domain'] unless @env['rack.auth.domain'].blank?
 
         RAILS_DEFAULT_LOGGER.info("write cookie is: #{cookie.inspect}") #DEBUG
-        RAILS_DEFAULT_LOGGER.info("write cookie value is: #{cookie_value.inspect}") #DEBUG
         cookie
       end
 
       def create_auth_token
-        unless @env['rack.auth.user'].blank?
-          cookie_value = {
-            'AUTH_USER' => @env['rack.auth.user']
-          }
+        cookie_value = {
+          'AUTH_USER' => @env['rack.auth.user']
+        }
 
-          @verifier.generate(cookie_value)
-        end
+        RAILS_DEFAULT_LOGGER.info("write cookie value is: #{cookie_value.inspect}") #DEBUG
+        @verifier.generate(cookie_value)
       end
 
       # return the shared domain if configured
