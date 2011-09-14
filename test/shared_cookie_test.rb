@@ -1,13 +1,10 @@
-require 'rubygems'
-require 'bundler/setup'
-require 'minitest/spec'
-require 'minitest/autorun'
-require 'rack/auth/shared_cookie'
+require File.join(File.dirname(__FILE__), 'test_helper')
 
 describe Rack::Auth::SharedCookie do
 
   it 'should read cookie'
   it 'should write cookie'
+  it 'should reject cookies with an invalid signature'
 
   describe 'cookie_domain' do
     def generate(options={})
