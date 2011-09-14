@@ -10,7 +10,7 @@ module Rack
         :cookie_name => 'auth_token',
         :shared_domain => true,
         :shared_domain_depth => 1,
-        :expires_in => 1.year
+        :expires_in => 31557600 # 1.year
       }
 
       def initialize(app, options={})
