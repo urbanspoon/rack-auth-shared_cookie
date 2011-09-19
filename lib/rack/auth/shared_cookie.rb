@@ -1,3 +1,4 @@
+require 'logger'
 require 'rack/request'
 require 'rack/utils'
 require 'active_support/message_verifier'
@@ -41,7 +42,7 @@ module Rack
           begin
             cookie_hash = read_cookie(request)
           rescue
-            RAILS_DEFAULT_LOGGER.error("[Rack::Auth::SharedCookie] Exception reading auth cookie: #{$!}")
+            logger.error("[Rack::Auth::SharedCookie] Exception reading auth cookie: #{$!}")
           end
 
           @env['rack.auth.user'] = cookie_hash['AUTH_USER']
@@ -93,11 +94,15 @@ module Rack
 
           # Browsers will not allow cookies to be set at the top level (.com) so warn about that
           if domain.split('.').size < 3 # split will return an empty string for leading .
-            RAILS_DEFAULT_LOGGER.warn("[Rack::Auth::SharedCookie] #{domain} is not a valid cookie domain, must have at least 2 segments")
+            logger.warn("[Rack::Auth::SharedCookie] #{domain} is not a valid cookie domain, must have at least 2 segments")
             domain = nil
           end
           domain
         end
+      end
+
+      def logger
+        @logger ||= defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : ::Logger.new($STDOUT)
       end
     end
   end
