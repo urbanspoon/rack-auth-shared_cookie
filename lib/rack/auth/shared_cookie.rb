@@ -41,11 +41,10 @@ module Rack
         unless request.cookies[@cookie_name].blank?
           begin
             cookie_hash = read_cookie(request)
+            @env['rack.auth.user'] = cookie_hash['AUTH_USER']
           rescue
             logger.error("[Rack::Auth::SharedCookie] Exception reading auth cookie: #{$!}")
           end
-
-          @env['rack.auth.user'] = cookie_hash['AUTH_USER']
         end
       end
 
