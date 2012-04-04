@@ -91,9 +91,8 @@ module Rack
         if @shared_domain && @shared_domain_depth.to_i > 0
           domain = '.' + host.sub(/^(.+?\.){#{@shared_domain_depth}}/, '')
 
-          # Browsers will not allow cookies to be set at the top level (.com) so warn about that
+          # Browsers will not allow cookies to be set at the top level (.com) so unset domain
           if domain.split('.').size < 3 # split will return an empty string for leading .
-            logger.warn("[Rack::Auth::SharedCookie] #{domain} is not a valid cookie domain, must have at least 2 segments")
             domain = nil
           end
           domain
