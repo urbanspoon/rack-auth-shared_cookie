@@ -101,7 +101,13 @@ module Rack
       end
 
       def logger
-        @logger ||= defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : ::Logger.new($STDOUT)
+        @logger ||=  if defined?(RAILS_DEFAULT_LOGGER)
+                       RAILS_DEFAULT_LOGGER
+                     elsif defined?(Rails)
+                       Rails.logger
+                     else
+                       ::Logger.new($STDOUT)
+                     end
       end
     end
   end
